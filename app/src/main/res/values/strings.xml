@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">CookIt</string>
+    <string name="næste_trin">Næste trin</string>
+    <string name="forrige_trin">Forrige trin</string>
+    <string name="ok">Ok</string>
+    <string name="introduktion">Du skal nu igang med at bruge vægten\n
+                                Dette består af 2 trin:\n
+                                \t\t 1. Indtastning af tara \n
+                                \t\t 2. Instastning af vægten \n
+                                Du vil blive guidet igennem trinene \n
+                                Tryk på \"Ok\" for at begynde</string>
+    <string name="fortsat">Du skal nu bruge vægten igen. Dette komme til at foregå på samme måde
+                           som tidligere. Tryk \"Ok\" for at begynde</string>
+    <string name="local_service_started">i dont know ?</string>
 </resources>
+

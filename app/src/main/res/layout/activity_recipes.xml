@@ -17,4 +17,15 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="75dp" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/recipes"
+        ></ListView>
+
+
 </RelativeLayout>

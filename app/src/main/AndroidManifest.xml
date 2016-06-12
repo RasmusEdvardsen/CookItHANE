@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hane.cookit">
 
+    <uses-permission android:name="android.permission.INTERNET" >
+    </uses-permission>
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">
+    </uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +22,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Recipes"></activity>
+        <activity android:name=".step_controller"></activity>
+        <activity android:name=".Vaegt_Controller"></activity>
+        <service android:name=".SocketService"/>
     </application>
 
 </manifest>
