@@ -10,14 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.net.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Mathias on 6/10/2016.
- */
 public class step_controller extends AppCompatActivity {
 
     //OnCreate
@@ -95,8 +89,6 @@ public class step_controller extends AppCompatActivity {
         extraButton.setVisibility(View.INVISIBLE);
         //Flow control fra step 1, til sidste step.
         if(step.getTrin()== 99){
-
-
             //Trin 99, er en betegnelse vi bruger til at definere sidste step
             setText = "Sidste trin";
             nextStep.setText("Afslut");
@@ -111,8 +103,6 @@ public class step_controller extends AppCompatActivity {
             });
         } else {
             setText = "Trin " + step.getTrin();
-
-
             //onClickListener til næste trin.
             nextStep.setOnClickListener(new View.OnClickListener()
             {

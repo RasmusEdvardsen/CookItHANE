@@ -2,11 +2,15 @@ package com.hane.cookit;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -16,124 +20,145 @@ import java.net.UnknownHostException;
 /**
  * Controller til at kontrollere forbindelsen mellem vaegten og appen
  */
-
 public class Vaegt_Controller extends AppCompatActivity {
 
     // Attributter
     // ---------------------------------------------------------------------------------------------
+    // til onCreate
     TextView vaegtSvar, vaegtIntro;
     Button buttonVidere, buttonTidligere, buttonOk;
     opskriftTrinDTO dto;
-    private VaegtKlient vaegt;
-    Socket socket;
+    String units;
+
+    // til AsyncTask;
+    double maengde, margin, safety = 1.05;
+    String enhed, ingrediens, vaegtOutput, tara, setText;
+    Handler refresh;
+    aktiverVaegt tempAV;
+    int vaegtOutputInt;
 
     // ---------------------------------------------------------------------------------------------
 
-    // OnCreate metodik
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vaegt_intro);
-        Log.e("VaegtCtrl:onCreate", "Igangsat");
 
-        // Tekstfelter og knap defineres for introduktionen
-        buttonOk = (Button) findViewById(R.id.vaegtOk);
+        //GUI Handler
+        refresh = new Handler(Looper.getMainLooper());
+
+        //Retreive DTO
+        dto = (opskriftTrinDTO) this.getIntent().getExtras().getSerializable("DTO");
+
+        //Attributter udfyldt med data fra DTO
+        enhed = dto.getEnhed();
+        ingrediens = dto.getIngrediens();
+        maengde = dto.getMaengde();
+        units = " " + maengde + " " + enhed + " " + ingrediens;
+
+        //Vores sikkerhedsmargin udregnes.
+        margin = (maengde * safety) - maengde;
+
         vaegtIntro = (TextView) findViewById(R.id.vaegtIntroduktion);
-        Log.e("VaegtCtrl:onCreate","Knap/tekstfelt oprettet");
-
-        Log.e("VaegtCtrl:onCreate","Ok knap defineret");
-        // Funktionalitet for "Ok"-knappen
+        buttonOk = (Button) findViewById(R.id.vaegtOk);
         buttonOk.setOnClickListener(new View.OnClickListener() {
-
-            @Override
             public void onClick(View v) {
-                /* buttonVidere.setVisibility(View.VISIBLE); // Gør "Næste trin"-knappen synlig
-                buttonTidligere.setVisibility(View.VISIBLE); // Gør "Forrige trin"-knappen synlig
-                // vaegtSvar.setText(""); // Nulstilles bare for at kunne opdateres af OnProgressUpdate
-                buttonOk.setVisibility(View.INVISIBLE); // Gør, at "Ok"-knappen forsvinder
-                buttonOk.setEnabled(false); // Gør, at der ikke kan trykkes på "Ok"-knappen
-                vaegt.setOkButtonPressed(true); // Husker, at brugeren nu har trykket "Ok" */
                 setContentView(R.layout.activity_vaegt_controller);
-
-                // Diverse tekstfelter og knapper defineres for vægt-sekvensen
                 vaegtSvar = (TextView) findViewById(R.id.vaegtSvar);
+
                 buttonVidere = (Button)findViewById(R.id.vaegtGodkendt);
-                buttonTidligere = (Button)findViewById(R.id.forrigeTrin);
-
-                // Funktionalitet for "Næste Trin"-knappen
-                // Der kan ikke trykkes på denne knap før at en betingelse er mødt, se "onProgressUpdate"
                 buttonVidere.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
                     public void onClick(final View v) {
-
-                        // vaegt.setOkButtonPressed(false); // Resetter "Ok"-knappen
-
-                        finish(); // Afslutter sekvensen (Native metode)
+                        Log.e("tempAV:","Første cancel");
+                        tempAV.cancel(true);
+                        Log.e("Finish()","Anden cancel");
+                        finish();
                     }
                 });
-
-                // Forbind til vægten
-                Log.e("vaegtCtrl:onClick","aktiverVaegt kaldes");
-                new aktiverVaegt().execute();
+                tempAV = new aktiverVaegt();
+                tempAV.execute();
+                Log.e("VaegtCtlr:OnClick","buttonOK gennemført");
             }
         });
-        Log.e("VaegtCtrl:onCreate","Ok-knap oprettet");
+    } //onCreate slut
 
-        //Retrieve DTO
-        dto = (opskriftTrinDTO) this.getIntent().getExtras().getSerializable("DTO");
-        Log.e("VaegtCtrl:onCreate","DTO hentet");
+    //GUI Metoder
+    //-------------------------------------------------------------------------------------------
+    public void minText(String message, TextView tv){
+        tv.setText(message);
+    }
 
-        /*
-        // Funktionalitet for "Forrige Trin"-knappen
-        buttonTidligere.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // .....
-            }
-        }); */
+    public void enableButton(Button button) {
+        button.setEnabled(true);
+    }
 
-    } // Method end
+    //-------------------------------------------------------------------------------------------
 
-    // Metodik til at invokere VaegtKlient
-    public class aktiverVaegt extends AsyncTask<String, String, VaegtKlient> {
-
+    public class aktiverVaegt extends AsyncTask<Void, Void, Void> {
 
         // Metodik til at køre "VaegtKlient" i baggrunden
         @Override
-        protected VaegtKlient doInBackground(String... message) {
+        protected Void doInBackground(Void... arg0) {
+            Log.e("VaegtCtrl:doInBckgrd","Started");
 
-            // Opretter VaegtKlient objekt
-            // Parametre skal aendres til at hente ingredienser for hvert trin
-            vaegt = new VaegtKlient(dto.getMaengde(),dto.getEnhed(),dto.getIngrediens(), socket, new VaegtKlient.receiveInterface() {
-
-                @Override
-                public void receive(String message) {
-                    publishProgress(message);
-                }
-
-                @Override
-                public boolean condition(boolean con) {
-                    return vaegt.getCondition();
-                }
-
+            refresh.post(new Runnable() {
+                public void run()
+                {minText(getString(R.string.tara), vaegtSvar);}
             });
-            vaegt.run();
 
-            return null;
-        }
-
-        // Metodik til at opdatere attributter og tekstfelter automatisk
-        @Override
-        protected void onProgressUpdate(String... values) {
-
-            super.onProgressUpdate(values);
-            vaegtSvar.setText(values[0]); // Ændrer tekst på skærmen
-
-            // Kontrollere, om brugeren kan gå videre
-            if (vaegt.getCondition()) { // Hvis brugeren har vejet korrekt af...
-                buttonVidere.setEnabled(true); // Så kan de trykker på "Næste Trin"-knappen
+            Log.e("VaegtCtrl:doInBckgrd","Venter på tara");
+            MainActivity.getService().sendMessage("T");
+            while ((tara = MainActivity.getService().readMessage()) != null) {
+                break; // Break for bare at komme videre i sekvensen...
             }
+            Log.e("VaegtCtrl:doInBckgrd","Tara modtaget");
+            setText = "Begynd nu at veje " + units + " op";
+            refresh.post(new Runnable() {
+                public void run()
+                {
+                    minText(setText, vaegtSvar);
+                }
+            });
+
+            Log.e("VaegtCtrl:doInBckgrd","Venter på vægt");
+            MainActivity.getService().sendMessage("RM");
+
+            while ((vaegtOutput = MainActivity.getService().readMessage()) != null) {
+                Log.e("VaegtCtlr: doInBckgrd","vaegtOutput modtaget: " + vaegtOutput);
+                try {
+                    vaegtOutputInt = Integer.parseInt(vaegtOutput);
+                } catch (NumberFormatException Ne) {
+                    Log.e("VaegtCtrl:doInBckgrd","NumberFormatException");
+                    refresh.post(new Runnable() {
+                        public void run()
+                        {minText("Prøv igen!", vaegtSvar);}
+                    });
+                    MainActivity.getService().sendMessage("RM");
+                    continue;
+                }
+                // Kontrollerer om brugeren har vejet op inden for en 5 % sikkerhedsmargin
+                if (vaegtOutputInt > maengde + margin || maengde - margin > vaegtOutputInt) {
+                    refresh.post(new Runnable() {
+                        public void run()
+                        {minText("Forkert afvejning: " + vaegtOutput + " gram\nDu skal bruge " + units, vaegtSvar);}
+                    });
+                    MainActivity.getService().sendMessage("RM");
+                } else {
+                    refresh.post(new Runnable() {
+                        public void run()
+                        {
+                            enableButton(buttonVidere);
+                        }
+                    });
+                    refresh.post(new Runnable() {
+                        public void run()
+                        {minText("Korrekt afvejning: " + vaegtOutput + " gram\nDu kan nu fortsætte ved at trykke på knappen \"Næste trin\"", vaegtSvar);}
+                    });
+                    break;
+                }
+            }
+            Log.e("AsyncTask: END","Afslutning af AsyncTask ???");
+            return null;
         }
 
         @Override
@@ -141,22 +166,7 @@ public class Vaegt_Controller extends AppCompatActivity {
             // Make sure we clean up if the task is killed
             Log.e("VaegtController", "AsyncTask cancel");
             super.onCancelled();
-
         }
     } // aktiverVaegt end
-
-    // Hjaelpemetoder
-    // ---------------------------------------------------------------------------------------------
-
-    // Hjaelpemetode til at resette knappernes indstillinger
-    private void buttonReset() {
-        buttonVidere.setVisibility(View.INVISIBLE); // Gør "Næste trin"-knappen synlig
-        buttonTidligere.setVisibility(View.INVISIBLE); // Gør "Forrige trin"-knappen synlig
-        vaegtSvar.setText(""); // Nulstilles bare for at kunne opdateres af OnProgressUpdate
-        buttonOk.setVisibility(View.VISIBLE); // Gør, at "Ok"-knappen forsvinder
-        buttonOk.setEnabled(true); // Gør, at der ikke kan trykkes på "Ok"-knappen
-    }
-
-    // ---------------------------------------------------------------------------------------------
 } // main end
 

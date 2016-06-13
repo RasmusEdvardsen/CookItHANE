@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Mathias on 6/7/2016.
- */
 public class db_controller implements Serializable {
 
     //Internal Data structure

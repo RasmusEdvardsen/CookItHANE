@@ -1,30 +1,18 @@
 package com.hane.cookit;
 
-import android.annotation.TargetApi;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
 
 public class SocketService extends Service{
     Socket socket;
@@ -93,8 +81,8 @@ public class SocketService extends Service{
         super.onDestroy();
         try {
             socket.close();
-            out.close();
-            in.close();
+            //out.close();
+            //in.close();
             Log.e("SocketService:onDestroy","I/O lukket");
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,7 +102,6 @@ public class SocketService extends Service{
     //Læs besked fra vægten
     public String readMessage(){
         try {
-            Log.e("SocketService:readMsg:","Message recieved");
             return in.readLine();
         } catch (IOException e) {
             e.printStackTrace();

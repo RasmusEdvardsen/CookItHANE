@@ -12,5 +12,6 @@
     <string name="fortsat">Du skal nu bruge vægten igen. Dette komme til at foregå på samme måde
                            som tidligere. Tryk \"Ok\" for at begynde</string>
     <string name="local_service_started">i dont know ?</string>
+    <string name="tara">Sæt din skål på vægten og reset den ved at trykke på \"reset\"</string>
 </resources>
 
