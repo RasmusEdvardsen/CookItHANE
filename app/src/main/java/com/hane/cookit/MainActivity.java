@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    //SocketService Initialisering og logik nødvendig, for kommunikation imellem SocketService og Activities.
+    //SocketService Initialisering og logik nødvendig, for kommunikation imellem SocketService og forskellige Activities.
     //-----------------------------------------------------------------------------------------------
     //Vores SocketService som et Objekt i denne activity.
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -65,41 +65,46 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // MainActivity.getService().sendMessage("String");
-
-
-
     //Denne metode binder servicen til vores MainActivity, så vi kan kalde metoder igennem, denne activity.
     private void doBindService() {
         bindService(new Intent(MainActivity.this, SocketService.class), mConnection, Context.BIND_AUTO_CREATE);
         isBound = true;
-        Log.e("doBindService","Kører doBindService() ?");
+        Log.e("MainActivity:Bind"," Succesful bind");
     }
 
     //unbinder service fra denne activity.
     private void doUnbindService() {
-        Log.e("doUnbindService","Vi unbinder Kører succesfuldt.");
         if (isBound) {
-            // Detach our existing connection.
             unbindService(mConnection);
             isBound = false;
+            Log.e("MainActivity:Unbind","Vi unbinder Kører succesfuldt.");
         }
     }
 
     @Override
+    //Hvis MainActivity ødelægges.
     protected void onDestroy() {
-        Log.e("onDestroy","onDestroy() Kører succesfuldt.");
         super.onDestroy();
         doUnbindService();
+        Log.e("MainActivity:onDestroy","onDestroy() Kører succesfuldt.");
     }
 
+    //Denne metode kaldes for at få adgang til vore service, fra andre andre Activities.
     public static SocketService getService(){
         return ss;
     }
 
-
+    /*
+    Alle ovenstående metode er med til at binde servicen til denne Activity.
+    Det ovenstående gør det muligt at kalde e.g. i andre Activies, og derved få adgang til vores Socket.
+    - MainActivity.getService().sendMessage("String");
+    - MainActivity definere hvilken Activity servicen er binded til
+    - getService() er vores metode, der returnere vores SocketService objekt.
+    - sendMessage("String") er en metode i SocketService klassen. For at sende en besked til vægten.
+    */
 
     //Socket logik end.
+    //----------------------------------------------------------------------------------------------
 
 
 }
