@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         //Kaldes når vi connecter til vores Service.
         public void onServiceConnected(ComponentName className, IBinder service) {
             ss = ((SocketService.LocalBinder)service).getService(); //Connecter og Binder servicen til vores lokale SocketService objekt.
-            Log.e("ServiceConnection","Får vi etableret en ServiceConnection");
+            Log.e("MainScript","Forbindelse oprettet");
         }
         //Kaldes hvis vi mister forbindelsen til vores Service.
         public void onServiceDisconnected(ComponentName className) {
