@@ -53,25 +53,25 @@ public class SocketService extends Service{
 
 
     @Override
-    //Denne metode køres når en instans af SocketService bliver oprettet,
+    // Denne metode køres når en instans af SocketService bliver oprettet
     public void onCreate() {
         super.onCreate();
-        vaegtAddr = new InetSocketAddress(VAEGT_IP,PORT); //Create Socket address til senere brug.
+        vaegtAddr = new InetSocketAddress(VAEGT_IP,PORT); //Create Socket address til senere brug
         socket = new Socket();  //initiate Socket;
         Log.e("SocketService:onCreate:", "Socket oprettet");
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    //Denne metode køres når startService() bliver kaldt. StartService er en native metode til Service.
+    // Denne metode køres når startService() bliver kaldt. StartService er en native metode til Service
     public void onStart(Intent intent, int startId){
         super.onStart(intent, startId);
-        Runnable connect = new connectSocket(); //Ny tråd initiate.
-        new Thread(connect).start();    //Thread startes. .start() kører run() metoden nedenfor.
+        Runnable connect = new connectSocket(); //Ny tråd initiate
+        new Thread(connect).start();    //Thread startes. .start() kører run() metoden nedenfor
         Log.e("SocketService:onStart:","Ny tråd startet");
     }
 
-    //Socket og read/write i Tråd.
+    // Socket og read/write i Tråd
     class connectSocket implements Runnable {
         @Override
         public void run() {
@@ -88,7 +88,7 @@ public class SocketService extends Service{
     }
 
     @Override
-    //Obligatorisk metode, når Servicen skal nedlægges.
+    //Obligatorisk metode, når Servicen skal nedlægges
     public void onDestroy() {
         super.onDestroy();
         try {
@@ -102,7 +102,7 @@ public class SocketService extends Service{
         socket = null;
     }
 
-    //Send besked til vægten.
+    //Send besked til vægten
     public void sendMessage(String message){
         if(out != null && !out.checkError()) {
             out.println(message);
@@ -111,7 +111,7 @@ public class SocketService extends Service{
         }
     }
 
-    //Læs besked fra vægten.
+    //Læs besked fra vægten
     public String readMessage(){
         try {
             Log.e("SocketService:readMsg:","Message recieved");

@@ -24,7 +24,6 @@
         android:id="@+id/vaegtGodkendt"
         android:text="@string/næste_trin"
         android:enabled="false"
-        android:visibility="invisible"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -34,7 +33,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/forrigeTrin"
         android:text="@string/forrige_trin"
-        android:visibility="invisible"
         android:layout_below="@+id/vaegtGodkendt"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
