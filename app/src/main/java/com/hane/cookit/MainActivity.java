@@ -11,10 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.net.Socket;
-
 public class MainActivity extends AppCompatActivity {
-
 
     // Socket attributer
     private static SocketService ss;
@@ -24,48 +21,62 @@ public class MainActivity extends AppCompatActivity {
     //MainActivity attributer
     Button buttonRecipes;
 
+    //Metode kaldt i onCreate
     public void setButtonRecipes(){
-        buttonRecipes = (Button)findViewById(R.id.buttonRecipes);
-        buttonRecipes.setOnClickListener(new View.OnClickListener()
+        //Logik til Recipe knappen.
+        buttonRecipes = (Button)findViewById(R.id.buttonRecipes); //Find html objekt.
+        buttonRecipes.setOnClickListener(new View.OnClickListener() //Lytter efter Click.
         {
             public void onClick(View v){
+                //Nyt intent startes, for at skifte activity.
                 Intent goToRecipes = new Intent(MainActivity.this, Recipes.class);
+                //Skift activty.
                 startActivity(goToRecipes);
             }
         });
     }
 
     @Override
+    //Denne metode kører ved opstart af app.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ma = this;
-        setContentView(R.layout.activity_main);
-        setButtonRecipes();
-        startService(new Intent(MainActivity.this,SocketService.class));
-        doBindService();
+        ma = this; //Bruges af SocketService logik.
+        setContentView(R.layout.activity_main); //Sætter layout på Activitien.
+        setButtonRecipes(); //Kalder førnævnte metode.
+        startService(new Intent(MainActivity.this,SocketService.class)); //Starter SocketService.
+        doBindService(); //Binder SocketService til denne Activity.
     }
 
-    //Socket logik:
+
+
+
+    //SocketService Initialisering og logik nødvendig, for kommunikation imellem SocketService og Activities.
+    //-----------------------------------------------------------------------------------------------
+    //Vores SocketService som et Objekt i denne activity.
     private ServiceConnection mConnection = new ServiceConnection() {
-
+        //Kaldes når vi connecter til vores Service.
         public void onServiceConnected(ComponentName className, IBinder service) {
+            ss = ((SocketService.LocalBinder)service).getService(); //Connecter og Binder servicen til vores lokale SocketService objekt.
             Log.e("ServiceConnection","Får vi etableret en ServiceConnection");
-            ss = ((SocketService.LocalBinder)service).getService();
-
         }
+        //Kaldes hvis vi mister forbindelsen til vores Service.
         public void onServiceDisconnected(ComponentName className) {
             ss = null;
         }
     };
 
+    // MainActivity.getService().sendMessage("String");
+
+
+
+    //Denne metode binder servicen til vores MainActivity, så vi kan kalde metoder igennem, denne activity.
     private void doBindService() {
-        Log.e("doBindService","Kører doBindService() ?");
         bindService(new Intent(MainActivity.this, SocketService.class), mConnection, Context.BIND_AUTO_CREATE);
         isBound = true;
-        //ss.IsBoundable();
+        Log.e("doBindService","Kører doBindService() ?");
     }
 
-
+    //unbinder service fra denne activity.
     private void doUnbindService() {
         Log.e("doUnbindService","Vi unbinder Kører succesfuldt.");
         if (isBound) {

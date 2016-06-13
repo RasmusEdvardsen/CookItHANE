@@ -35,8 +35,9 @@ public class SocketService extends Service{
     InetSocketAddress vaegtAddr;
 
     @Override
+    //-------------------------------------------------------------------------
+    // Binder er obligatorisk, og bruges til at binde servicen til en Activity.
     public IBinder onBind(Intent arg0) {
-        // Obligatorisk metode.
         return myBinder;
     }
 
@@ -47,40 +48,38 @@ public class SocketService extends Service{
             return SocketService.this;
         }
     }
+    // Binder slut
+    // -------------------------------------------------------------------------
+
 
     @Override
+    //Denne metode køres når en instans af SocketService bliver oprettet,
     public void onCreate() {
         super.onCreate();
-        vaegtAddr = new InetSocketAddress(VAEGT_IP,PORT);
-        socket = new Socket();
-        Log.e("socketSingleton", "Socket oprettet");
+        vaegtAddr = new InetSocketAddress(VAEGT_IP,PORT); //Create Socket address til senere brug.
+        socket = new Socket();  //initiate Socket;
+        Log.e("SocketService:onCreate:", "Socket oprettet");
     }
-
-
-    public void IsBoundable(){
-       // Toast.makeText(this,"I bind like butter", Toast.LENGTH_LONG).show();
-    }
-
-
 
     @SuppressWarnings("deprecation")
     @Override
+    //Denne metode køres når startService() bliver kaldt. StartService er en native metode til Service.
     public void onStart(Intent intent, int startId){
         super.onStart(intent, startId);
-        Log.e("onStart","Ny tråd startet");
-        Runnable connect = new connectSocket();
-        new Thread(connect).start();
+        Runnable connect = new connectSocket(); //Ny tråd initiate.
+        new Thread(connect).start();    //Thread startes. .start() kører run() metoden nedenfor.
+        Log.e("SocketService:onStart:","Ny tråd startet");
     }
 
+    //Socket og read/write i Tråd.
     class connectSocket implements Runnable {
-
         @Override
         public void run() {
             try {
                 socket.connect(vaegtAddr);
-                Log.e("SocketService","Connection established");
                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                Log.e("SocketService:run:","Connection established");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -89,26 +88,33 @@ public class SocketService extends Service{
     }
 
     @Override
+    //Obligatorisk metode, når Servicen skal nedlægges.
     public void onDestroy() {
         super.onDestroy();
         try {
             socket.close();
+            out.close();
+            in.close();
+            Log.e("SocketService:onDestroy","I/O lukket");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         socket = null;
     }
 
+    //Send besked til vægten.
     public void sendMessage(String message){
         if(out != null && !out.checkError()) {
             out.println(message);
             out.flush();
+            Log.e("SocketService:sendMsg","Message send: "+message);
         }
     }
 
+    //Læs besked fra vægten.
     public String readMessage(){
         try {
+            Log.e("SocketService:readMsg:","Message recieved");
             return in.readLine();
         } catch (IOException e) {
             e.printStackTrace();

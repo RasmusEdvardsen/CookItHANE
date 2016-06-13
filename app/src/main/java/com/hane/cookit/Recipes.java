@@ -24,7 +24,6 @@ public class Recipes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
 
-        MainActivity.getService().sendMessage("T");
         //Fylder StringArray med navnene på opskrifter
         final List<opskriftDTO> array =  db.getRecipes();
         String[] output = new String[array.size()];
