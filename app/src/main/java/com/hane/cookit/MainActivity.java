@@ -19,22 +19,7 @@ public class MainActivity extends AppCompatActivity {
     public MainActivity ma;
 
     //MainActivity attributer
-    Button buttonRecipes;
-
-    //Metode kaldt i onCreate
-    public void setButtonRecipes(){
-        //Logik til Recipe knappen.
-        buttonRecipes = (Button)findViewById(R.id.buttonRecipes); //Find html objekt.
-        buttonRecipes.setOnClickListener(new View.OnClickListener() //Lytter efter Click.
-        {
-            public void onClick(View v){
-                //Nyt intent startes, for at skifte activity.
-                Intent goToRecipes = new Intent(MainActivity.this, Recipes.class);
-                //Skift activty.
-                startActivity(goToRecipes);
-            }
-        });
-    }
+    Button buttonRecipes,connectButton;
 
     @Override
     //Denne metode kører ved opstart af app.
@@ -42,10 +27,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ma = this; //Bruges af SocketService logik.
         setContentView(R.layout.activity_main); //Sætter layout på Activitien.
-        setButtonRecipes(); //Kalder førnævnte metode.
-        startService(new Intent(MainActivity.this,SocketService.class)); //Starter SocketService.
-        doBindService(); //Binder SocketService til denne Activity.
-    }
+
+        buttonRecipes = (Button)findViewById(R.id.buttonRecipes); //Find html objekt.
+        buttonRecipes.setOnClickListener(new View.OnClickListener() //Lytter efter Click.
+        {
+            public void onClick(View v){
+                Intent goToRecipes = new Intent(MainActivity.this, Recipes.class);//Nyt intent startes, for at skifte activity.
+                startActivity(goToRecipes);//Skift activty.
+            }
+        });
+
+        connectButton = (Button) findViewById(R.id.connectButton);
+        connectButton.setOnClickListener(new View.OnClickListener() //Lytter efter Click.
+        {
+            public void onClick(View v){
+                startService(new Intent(MainActivity.this,SocketService.class)); //Starter SocketService.
+                doBindService(); //Binder SocketService til denne Activity.
+            }
+        });
+    }//onCreate end
 
 
 
@@ -98,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
     Alle ovenstående metode er med til at binde servicen til denne Activity.
     Det ovenstående gør det muligt at kalde e.g. i andre Activies, og derved få adgang til vores Socket.
     - MainActivity.getService().sendMessage("String");
-    - MainActivity definere hvilken Activity servicen er binded til
-    - getService() er vores metode, der returnere vores SocketService objekt.
-    - sendMessage("String") er en metode i SocketService klassen. For at sende en besked til vægten.
+    -- MainActivity definere hvilken Activity servicen er binded til
+    -- getService() er vores metode, der returnere vores SocketService objekt.
+    -- sendMessage("String") er en metode i SocketService klassen. For at sende en besked til vægten.
     */
 
     //Socket logik end.

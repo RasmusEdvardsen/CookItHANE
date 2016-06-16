@@ -18,14 +18,13 @@ public class step_controller extends AppCompatActivity {
     TextView tv,ig,itv,intro;
     Button start;
     opskriftDTO temp;
-    int currentStep = 1;
     db_controller db;
 
     //Start
     TextView overskrift, handling, timerTV;
     Button nextStep, extraButton;
-    String setText;
-    int min, tid;
+    public String setText, units;
+    private int tid;
 
     protected void onCreate(Bundle savedInstanceState){
         //Standard initiate
@@ -72,6 +71,7 @@ public class step_controller extends AppCompatActivity {
                 nextStep.setText("Næste trin");
                 overskrift = (TextView) findViewById(R.id.stepOverskriftTV);
                 handling = (TextView) findViewById(R.id.handlingTV);
+                //ingrediensSteptv = (TextView) findViewById(R.id.igTV);
                 extraButton = (Button) findViewById(R.id.startVejningButton);
                 run(db.getStep(temp.getOpskriftID(),1));
             }
@@ -81,10 +81,14 @@ public class step_controller extends AppCompatActivity {
 
     }
 
-    public void run(final opskriftTrinDTO step){
+    private void run(final opskriftTrinDTO step){
 
+        //Goer DTO objektet klar til næste trin.
         final Bundle b = new Bundle();
         b.putSerializable("DTO",step);
+
+        //Klargoering af data
+        units =" " + step.getMaengde() + " " + step.getEnhed() + " " + step.getIngrediens();
 
         extraButton.setVisibility(View.INVISIBLE);
         //Flow control fra step 1, til sidste step.
@@ -127,7 +131,7 @@ public class step_controller extends AppCompatActivity {
             extraButton.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v){
-                    //startVejnin
+                    //startVejning
                     Intent goToVaegt = new Intent(step_controller.this, Vaegt_Controller.class);
                     goToVaegt.putExtras(b);
                     startActivity(goToVaegt);
@@ -137,17 +141,25 @@ public class step_controller extends AppCompatActivity {
         }
 
         //Hvis der er en Timer.
-        if((min=step.getTid())!=0){
+        if((step.getTid())!=0){
+
+            // UI manipuliation
             timerTV = (TextView) findViewById(R.id.timerTV);
             extraButton.setText("Start timer");
             extraButton.setVisibility(View.VISIBLE);
+
+            //Omregning fra minuter til milisekunder
             tid = step.getTid()*60000;
+
+            //OnClick metode med start af Timer
             extraButton.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v){
                     extraButton.setVisibility(View.INVISIBLE);
                     timerTV.setVisibility(View.VISIBLE);
-                 new CountDownTimer(tid, 1000) { // adjust the milli seconds here
+
+                    //Ekstern kode til standard Timer implementering.
+                 new CountDownTimer(tid, 1000) {
 
                         public void onTick(long millisUntilFinished) {
                             timerTV.setText(""+String.format("%d min, %d sec",

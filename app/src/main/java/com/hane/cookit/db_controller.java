@@ -10,7 +10,6 @@ public class db_controller implements Serializable {
     public List<opskriftDTO> opskrift;
     public List<opskriftTrinDTO> pandekager;
     public List<opskriftTrinDTO> chokokage;
-    boolean define = true;
 
 
     public db_controller() {
@@ -40,7 +39,7 @@ public class db_controller implements Serializable {
         }
     }
 
-    public void initiate(){
+    private void initiate(){
                 // PANDEKAGE TRIN
                 //  public opskriftTrinDTO(int opskriftID, double maengde, int tid, int trin, String ingrediens, String enhed, String handling, boolean vaegt)
                 opskriftTrinDTO obj1 = new opskriftTrinDTO(1,50,0,1,"smør", "g","Smelt smøret",true);

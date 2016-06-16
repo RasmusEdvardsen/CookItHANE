@@ -40,9 +40,8 @@
         android:layout_height="wrap_content"
         android:text="vejning"
         android:id="@+id/startVejningButton"
-        android:layout_above="@+id/nextStepButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="75dp" />
+        android:layout_alignBottom="@+id/timerTV"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -50,7 +49,18 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Timer"
         android:id="@+id/timerTV"
-        android:layout_alignTop="@+id/startVejningButton"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        android:layout_above="@+id/nextStepButton"
+        android:layout_alignLeft="@+id/startVejningButton"
+        android:layout_alignStart="@+id/startVejningButton"
+        android:layout_marginBottom="79dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/igTV"
+        android:layout_below="@+id/stepOverskriftTV"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

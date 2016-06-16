@@ -14,9 +14,7 @@ import java.util.List;
 
 public class Recipes extends AppCompatActivity {
 
-    db_controller db = new db_controller();
-    SocketService ss;
-    Boolean isBound;
+    private db_controller db = new db_controller();
 
 
     @Override
@@ -31,10 +29,14 @@ public class Recipes extends AppCompatActivity {
             output[i] = array.get(i).getNavn();
         }
 
-        //Laver et ListView med navnene fra StringArray'et
+        // Adapteren bestemmer layoutet af hvert objekt vist i ListViewet.
         ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.listview,output);
+
+        //Laver et ListView med navnene fra StringArray'et
         ListView ListView = (ListView) findViewById(R.id.recipes);
         ListView.setAdapter(adapter);
+
+        //Laver en Listener, og reagere afhængigt af brugerens valg
         ListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3){

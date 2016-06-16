@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class SocketService extends Service{
-    Socket socket;
+    private Socket socket;
     PrintWriter out;
     BufferedReader in;
     private static final String VAEGT_IP = "80.71.140.75"; // Vaegtens ip-addresse
@@ -81,8 +81,8 @@ public class SocketService extends Service{
         super.onDestroy();
         try {
             socket.close();
-            //out.close();
-            //in.close();
+            out.close();
+            in.close();
             Log.e("SocketService:onDestroy","I/O lukket");
         } catch (IOException e) {
             e.printStackTrace();

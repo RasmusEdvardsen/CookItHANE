@@ -84,11 +84,11 @@ public class Vaegt_Controller extends AppCompatActivity {
 
     //GUI Metoder
     //-------------------------------------------------------------------------------------------
-    public void minText(String message, TextView tv){
+    private void minText(String message, TextView tv){
         tv.setText(message);
     }
 
-    public void enableButton(Button button) {
+    private void enableButton(Button button) {
         button.setEnabled(true);
     }
 
